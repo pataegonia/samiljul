@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./routes/homs";
-import Map from "./routes/map";
-import Recommand from "./routes/recommand";
+import React, { useState } from "react";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import ThemeSelection from "./components/ThemeSelection";
+import DateSelection from "./components/DateSelection";
+import TimeSelection from "./components/TimeSelection";
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
@@ -13,39 +13,67 @@ const GlobalStyle = createGlobalStyle`
   }
 
   html, body, #root {
-    height: 100%; /* 전체 높이 설정 */
+    height: 100%;
   }
 
   body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #e9f1f7;
+    background-color: #f8f9fa;
     font-family: Arial, sans-serif;
   }
 `;
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/map",
-    element: <Map />,
-  },
-  {
-    path: "/recommand",
-    element: <Recommand />,
-  },
-]);
-
 function App() {
+  // 선택 데이터를 최상위에서 관리
+  const [selections, setSelections] = useState({
+    theme: [],
+    date: "",
+    time: [],
+  });
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Navigate to="/theme" replace />,
+    },
+    {
+      path: "/theme",
+      element: (
+        <ThemeSelection
+          selections={selections}
+          setSelections={setSelections}
+        />
+      ),
+    },
+    {
+      path: "/date",
+      element: (
+        <DateSelection
+          selections={selections}
+          setSelections={setSelections}
+        />
+      ),
+    },
+    {
+      path: "/time",
+      element: (
+        <TimeSelection
+          selections={selections}
+          setSelections={setSelections}
+        />
+      ),
+    },
+  ]);
+
   return (
     <>
-      <RouterProvider router={router}></RouterProvider>
+      <GlobalStyle />
+      <RouterProvider router={router} />
     </>
   );
 }
 
 export default App;
+
