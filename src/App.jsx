@@ -14,19 +14,44 @@ const GlobalStyle = createGlobalStyle`
 
   html, body, #root {
     height: 100%;
+    width: 100%;
   }
 
   body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f8f9fa;
-    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #6a11cb, #2575fc); /* 토스 느낌 */
+    font-family: "Pretendard", Arial, sans-serif;
+    color: white;
   }
 `;
 
+function NotFound() {
+  return (
+    <div style={{ textAlign: "center", padding: "20px" }}>
+      <h1>404</h1>
+      <p>페이지를 찾을 수 없습니다.</p>
+      <button
+        style={{
+          marginTop: "20px",
+          padding: "10px 20px",
+          background: "linear-gradient(135deg, #6a11cb, #2575fc)",
+          color: "white",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+          fontSize: "1rem",
+        }}
+        onClick={() => window.location.href = "/theme"}
+      >
+        메인으로 돌아가기
+      </button>
+    </div>
+  );
+}
+
 function App() {
-  // 선택 데이터를 최상위에서 관리
   const [selections, setSelections] = useState({
     theme: [],
     date: "",
@@ -65,6 +90,10 @@ function App() {
         />
       ),
     },
+    {
+      path: "*", 
+      element: <NotFound />,
+    },
   ]);
 
   return (
@@ -76,4 +105,3 @@ function App() {
 }
 
 export default App;
-

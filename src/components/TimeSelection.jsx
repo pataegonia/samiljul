@@ -1,27 +1,26 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 export default function TimeSelection({ selections, setSelections }) {
   const navigate = useNavigate();
   const [selectedTimes, setSelectedTimes] = useState(selections.time || []);
 
-  const handleTimeToggle = (time) => {
-    setSelectedTimes((prev) =>
-      prev.includes(time)
-        ? prev.filter((t) => t !== time) // 중복 선택 해제
-        : [...prev, time]
-    );
+  const handleTimeClick = (time) => {
+    const newTimes = selectedTimes.includes(time)
+      ? selectedTimes.filter((t) => t !== time)
+      : [...selectedTimes, time];
+    setSelectedTimes(newTimes);
   };
 
-  const handleSubmit = () => {
+  const handleNext = () => {
     setSelections({ ...selections, time: selectedTimes });
-    alert(`최종 선택:\n테마: ${selections.theme.join(", ")}\n날짜: ${selections.date}\n시간: ${selectedTimes.join(", ")}`);
+    navigate("/summary");
   };
 
   const handlePrev = () => {
-    setSelections({ ...selections, time: selectedTimes }); // 현재 데이터 저장
-    navigate("/date"); // 날짜 선택 페이지로 이동
+    setSelections({ ...selections, time: selectedTimes });
+    navigate("/date");
   };
 
   return (
@@ -31,107 +30,158 @@ export default function TimeSelection({ selections, setSelections }) {
         <Progress style={{ width: "100%" }} />
       </ProgressBar>
 
-      {/* 선택된 날짜 표시 */}
-      <Header>
-        <SelectedDate>{selections.date || "날짜를 선택하세요"}</SelectedDate>
-      </Header>
+      {/* 안내 메시지 */}
+      <Instruction>
+        {selectedTimes.length === 0
+          ? "데이트할 시간을 선택해주세요! ⏰"
+          : `선택된 시간: ${selectedTimes.join(", ")}`}
+      </Instruction>
 
-      {/* 시간 선택 */}
-      <TimeContainer>
+      {/* 시간 선택 버튼 */}
+      <TimeGrid>
         {Array.from({ length: 24 }, (_, i) => {
-          const time = `${String(i).padStart(2, "0")}:00`;
+          const time = `${i.toString().padStart(2, "0")}:00`;
           return (
             <TimeButton
               key={time}
               isSelected={selectedTimes.includes(time)}
-              onClick={() => handleTimeToggle(time)}
+              onClick={() => handleTimeClick(time)}
             >
               {time}
             </TimeButton>
           );
         })}
-      </TimeContainer>
+      </TimeGrid>
 
       {/* 하단 버튼 */}
       <Footer>
         <PrevButton onClick={handlePrev}>이전</PrevButton>
-        <SubmitButton onClick={handleSubmit} disabled={selectedTimes.length === 0}>
+        <NextButton onClick={handleNext} disabled={selectedTimes.length === 0}>
           선택
-        </SubmitButton>
+        </NextButton>
       </Footer>
     </Container>
   );
 }
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 20px;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  font-family: "Pretendard", sans-serif;
+  color: white;
 `;
 
 const ProgressBar = styled.div`
-  width: 100%;
+  width: 90%;
   height: 8px;
-  background-color: #e0e0e0;
+  background-color: rgba(255, 255, 255, 0.3);
   margin-bottom: 20px;
+  border-radius: 4px;
 `;
 
 const Progress = styled.div`
   height: 100%;
-  background-color: black;
+  background: linear-gradient(to right, #ff758c, #ff7eb3);
+  border-radius: 4px;
 `;
 
-const Header = styled.div`
+const Instruction = styled.div`
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: white;
+  animation: ${fadeIn} 0.5s ease;
+`;
+
+const TimeGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+  width: 90%;
   margin-bottom: 20px;
 `;
 
-const SelectedDate = styled.div`
-  font-size: 1.2em;
-  font-weight: bold;
-  color: black;
-`;
-
-const TimeContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-`;
-
 const TimeButton = styled.button`
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid ${(props) => (props.isSelected ? "black" : "#ccc")};
-  background-color: ${(props) => (props.isSelected ? "black" : "white")};
-  color: ${(props) => (props.isSelected ? "white" : "black")};
+  padding: 15px 10px;
+  border-radius: 20px;
+  background: ${(props) =>
+    props.isSelected
+      ? "linear-gradient(135deg, #ff758c, #ff7eb3)"
+      : "rgba(255, 255, 255, 0.2)"};
+  color: ${(props) => (props.isSelected ? "white" : "white")};
+  font-size: 1rem;
+  font-weight: ${(props) => (props.isSelected ? "bold" : "normal")};
+  border: none;
   cursor: pointer;
-  font-size: 0.9em;
+  transition: all 0.3s;
+
+  &:hover {
+    background: ${(props) =>
+      props.isSelected
+        ? "linear-gradient(135deg, #ff758c, #ff7eb3)"
+        : "rgba(255, 255, 255, 0.3)"};
+    transform: scale(1.05);
+  }
+
+  ${(props) =>
+    props.isSelected &&
+    css`
+      box-shadow: 0px 4px 15px rgba(255, 118, 117, 0.8);
+    `}
 `;
 
 const Footer = styled.div`
   margin-top: 20px;
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  width: 90%;
 `;
 
 const PrevButton = styled.button`
   padding: 10px 20px;
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-  border-radius: 4px;
-  cursor: pointer;
-`;
-
-const SubmitButton = styled.button`
-  padding: 10px 20px;
-  background-color: ${(props) => (props.disabled ? "#ccc" : "black")};
+  background: linear-gradient(135deg, #a6c1ee, #fbc2eb);
   color: white;
   border: none;
-  border-radius: 4px;
-  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
+const NextButton = styled.button`
+  padding: 10px 20px;
+  background: ${(props) =>
+    props.disabled
+      ? "rgba(255, 255, 255, 0.3)"
+      : "linear-gradient(135deg, #6a11cb, #2575fc)"};
+  color: ${(props) => (props.disabled ? "#999" : "white")};
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  transition: all 0.3s;
+
+  &:hover {
+    transform: ${(props) => (props.disabled ? "none" : "scale(1.05)")};
+  }
+`;
