@@ -11,7 +11,7 @@ app.use(express.json());
 app.post("api/recommand", async (req, res) => {
   //const { date, time, loc } = req.body;
   try {
-    const courses = await getPlace("카페", loc);
+    const courses = await getPlace("맛집", loc);
     if (courses) {
       res.json({ date, time, loc, course: courses });
     } else {
