@@ -1,86 +1,92 @@
+import styled from "styled-components"; // styled-components 추가
 import React, { useState } from "react";
-import styled, { css, keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
+
+const getRecommendation = (startTime, endTime) => {
+  if (startTime >= 6 && endTime <= 10) {
+    return "신선한 공기를 마시며 조깅하기 좋은 시간입니다! 🏃‍♂️";
+  } else if (startTime >= 10 && endTime <= 14) {
+    return "브런치와 함께 데이트를 즐겨보세요! 🥞";
+  } else if (startTime >= 14 && endTime <= 18) {
+    return "활동적인 야외 데이트를 즐기기 좋은 시간이에요! 🚴‍♀️";
+  } else if (startTime >= 18 && endTime <= 22) {
+    return "로맨틱한 저녁 식사와 야경을 즐겨보세요. 🌃";
+  } else if ((startTime >= 22 && endTime <= 24) || (startTime >= 0 && endTime <= 6)) {
+    return "조용한 카페나 밤 산책을 추천합니다. 🌌";
+  } else {
+    return "여러분만의 특별한 시간을 만들어보세요! 🌟";
+  }
+};
 
 export default function TimeSelection({ selections, setSelections }) {
   const navigate = useNavigate();
-  const [selectedTime, setSelectedTime] = useState(selections.time || "");
-
-  const handleTimeClick = (time) => {
-    setSelectedTime(time === selectedTime ? "" : time); // Toggle selection
-  };
+  const [startTime, setStartTime] = useState(selections.startTime || 6);
+  const [endTime, setEndTime] = useState(selections.endTime || 8);
 
   const handleNext = () => {
-    setSelections({ ...selections, time: selectedTime });
+    setSelections({ ...selections, startTime, endTime });
     navigate("/summary");
   };
 
   const handlePrev = () => {
-    setSelections({ ...selections, time: selectedTime });
+    setSelections({ ...selections, startTime, endTime });
     navigate("/date");
   };
 
+  const recommendation = getRecommendation(startTime, endTime);
+
   return (
     <Container>
-      {/* 진행 바 */}
-      <ProgressBar>
-        <Progress style={{ width: "100%" }} />
-      </ProgressBar>
+      <Header>
+        <Title>시간 설정</Title>
+        <Subtitle>원하는 데이트 시간을 설정하세요 ⏰</Subtitle>
+      </Header>
 
-      {/* 안내 메시지 */}
-      <Instruction>
-        {selectedTime
-          ? `선택된 시간: ${selectedTime}~`
-          : "데이트 시작 시간을 선택해주세요! ⏰"}
-      </Instruction>
+      <Instruction>{`선택된 시간: ${startTime}:00 ~ ${endTime}:00`}</Instruction>
 
-      {/* 시간 선택 버튼 */}
-      <TimeGrid>
-        {Array.from({ length: 24 }, (_, i) => {
-          const time = `${i.toString().padStart(2, "0")}:00`;
-          return (
-            <TimeButton
-              key={time}
-              isSelected={selectedTime === time}
-              onClick={() => handleTimeClick(time)}
-            >
-              {time}~
-            </TimeButton>
-          );
-        })}
-      </TimeGrid>
+      <SliderWrapper>
+        <TimeLabel>시작 시간</TimeLabel>
+        <Slider
+          type="range"
+          min="0"
+          max="23"
+          value={startTime}
+          onChange={(e) => {
+            const value = parseInt(e.target.value);
+            if (value < endTime) setStartTime(value);
+          }}
+        />
+        <TimeValue>{startTime}:00</TimeValue>
+      </SliderWrapper>
 
-      {/* 하단 버튼 */}
+      <SliderWrapper>
+        <TimeLabel>종료 시간</TimeLabel>
+        <Slider
+          type="range"
+          min="1"
+          max="24"
+          value={endTime}
+          onChange={(e) => {
+            const value = parseInt(e.target.value);
+            if (value > startTime) setEndTime(value);
+          }}
+        />
+        <TimeValue>{endTime}:00</TimeValue>
+      </SliderWrapper>
+
+      <RecommendationBox>
+        <RecommendationText>{recommendation}</RecommendationText>
+      </RecommendationBox>
+
       <Footer>
         <PrevButton onClick={handlePrev}>이전</PrevButton>
-        <NextButton onClick={handleNext} disabled={!selectedTime}>
-          선택
-        </NextButton>
+        <NextButton onClick={handleNext}>선택</NextButton>
       </Footer>
     </Container>
   );
 }
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-const scaleUp = keyframes`
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.1);
-  }
-`;
-
+// 스타일 컴포넌트
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -93,82 +99,101 @@ const Container = styled.div`
   color: white;
 `;
 
-const ProgressBar = styled.div`
-  width: 90%;
-  height: 8px;
-  background-color: rgba(255, 255, 255, 0.3);
-  margin-bottom: 20px;
-  border-radius: 4px;
+const Header = styled.div`
+  margin: 20px 0;
 `;
 
-const Progress = styled.div`
-  height: 100%;
-  background: linear-gradient(to right, #ff758c, #ff7eb3);
-  border-radius: 4px;
+const Title = styled.h1`
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+`;
+
+const Subtitle = styled.p`
+  font-size: 1rem;
+  margin-top: 10px;
+  opacity: 0.8;
 `;
 
 const Instruction = styled.div`
-  font-size: 1.2rem;
+  margin: 20px 0;
+  font-size: 1.4rem;
   font-weight: 600;
-  margin-bottom: 20px;
-  color: white;
-  animation: ${fadeIn} 0.5s ease;
 `;
 
-const TimeGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 15px;
-  width: 90%;
-  margin-bottom: 20px;
+const SliderWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  width: 80%;
 `;
 
-const TimeButton = styled.button`
-  padding: 15px 10px;
-  border-radius: 20px;
-  background: ${(props) =>
-    props.isSelected
-      ? "linear-gradient(135deg, #ff758c, #ff7eb3)"
-      : "rgba(255, 255, 255, 0.2)"};
-  color: white;
+const TimeLabel = styled.div`
   font-size: 1rem;
-  font-weight: ${(props) => (props.isSelected ? "bold" : "normal")};
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s;
+  margin-bottom: 10px;
+  font-weight: 600;
+`;
 
-  ${(props) =>
-    props.isSelected &&
-    css`
-      animation: ${scaleUp} 0.3s ease-in-out infinite alternate;
-      box-shadow: 0px 4px 20px rgba(255, 118, 117, 0.9);
-    `}
+const Slider = styled.input`
+  width: 100%;
+  appearance: none;
+  height: 10px;
+  background: linear-gradient(to right, #ff758c, #ff7eb3);
+  border-radius: 5px;
+  outline: none;
 
-  &:hover {
-    background: ${(props) =>
-      props.isSelected
-        ? "linear-gradient(135deg, #ff758c, #ff7eb3)"
-        : "rgba(255, 255, 255, 0.3)"};
-    transform: scale(1.05);
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 2px solid #ff758c;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.2);
+    }
   }
 `;
 
+const TimeValue = styled.div`
+  margin-top: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+`;
+
+const RecommendationBox = styled.div`
+  background: rgba(255, 255, 255, 0.2);
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 10px;
+  max-width: 80%;
+`;
+
+const RecommendationText = styled.p`
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: bold;
+`;
+
 const Footer = styled.div`
-  margin-top: 20px;
+  margin-top: auto;
   display: flex;
   justify-content: space-between;
   width: 90%;
 `;
 
 const PrevButton = styled.button`
-  padding: 10px 20px;
+  padding: 15px 30px;
   background: linear-gradient(135deg, #a6c1ee, #fbc2eb);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s;
 
   &:hover {
     transform: scale(1.05);
@@ -176,19 +201,15 @@ const PrevButton = styled.button`
 `;
 
 const NextButton = styled.button`
-  padding: 10px 20px;
-  background: ${(props) =>
-    props.disabled
-      ? "rgba(255, 255, 255, 0.3)"
-      : "linear-gradient(135deg, #6a11cb, #2575fc)"};
-  color: ${(props) => (props.disabled ? "#999" : "white")};
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
-  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
-  transition: all 0.3s;
+  cursor: pointer;
 
   &:hover {
-    transform: ${(props) => (props.disabled ? "none" : "scale(1.05)")};
+    transform: scale(1.05);
   }
 `;

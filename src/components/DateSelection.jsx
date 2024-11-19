@@ -24,44 +24,45 @@ export default function DateSelection({ selections, setSelections }) {
 
   const handleDateClick = (date) => {
     if (isRangeMode) {
-      if (selectedRange.length === 0) {
-        // Start of the range
-        setSelectedRange([date]);
-        setSelectedDates([date]); // Show the first selected date
-        setSelectedMessage(`종료 날짜를 선택해주세요.`);
-      } else if (selectedRange.length === 1) {
-        // Complete the range
-        const startDate = dayjs(selectedRange[0]);
-        const endDate = dayjs(date);
-  
-        if (startDate.isBefore(endDate)) {
-          const range = [];
-          let current = startDate;
-  
-          // Fill dates between startDate and endDate
-          while (current.isBefore(endDate) || current.isSame(endDate)) {
-            range.push(current.format("YYYY-MM-DD"));
-            current = current.add(1, "day");
-          }
-  
-          setSelectedRange(range);
-          setSelectedDates(range);
-          setSelectedMessage(`${startDate.format("M월 D일")}~${endDate.format("M월 D일")}에 완벽한 데이트 코스를 추천해드릴게요! 😊`);
+        if (selectedRange.length === 0) {
+            // 범위의 시작 날짜 설정
+            setSelectedRange([date]);
+            setSelectedDates([date]); // 첫 번째 선택된 날짜를 표시
+            setSelectedMessage(`종료 날짜를 선택해주세요.`);
+        } else if (selectedRange.length === 1) {
+            const startDate = dayjs(selectedRange[0]);
+            const endDate = dayjs(date);
+
+            if (startDate.isBefore(endDate)) {
+                // 범위 완료
+                const range = [];
+                let current = startDate;
+
+                // 시작 날짜부터 종료 날짜까지의 날짜를 배열로 채우기
+                while (current.isBefore(endDate) || current.isSame(endDate)) {
+                    range.push(current.format("YYYY-MM-DD"));
+                    current = current.add(1, "day");
+                }
+
+                setSelectedRange(range);
+                setSelectedDates(range);
+                setSelectedMessage(`${startDate.format("M월 D일")}~${endDate.format("M월 D일")}에 완벽한 데이트 코스를 추천해드릴게요! 😊`);
+            } else {
+                // 종료 날짜가 시작 날짜보다 이전인 경우
+                alert("시작 날짜보다 이후 날짜를 선택해주세요!");
+            }
         } else {
-          alert("시작 날짜보다 이후 날짜를 선택해주세요!");
+            // 선택을 초기화하고 새로운 시작 날짜 설정
+            setSelectedRange([date]);
+            setSelectedDates([date]);
+            setSelectedMessage(`종료 날짜를 선택해주세요.`);
         }
-      } else {
-        // Reset the range if a new start is chosen
-        setSelectedRange([date]);
-        setSelectedDates([date]);
-        setSelectedMessage(`종료 날짜를 선택해주세요.`);
-      }
     } else {
-      // Single-date selection
-      setSelectedDates([date]);
-      setSelectedMessage(`${dayjs(date).format("M월 D일")}에 완벽한 데이트 코스를 추천해드릴게요! 😊`);
+        // 단일 날짜 선택 모드
+        setSelectedDates([date]);
+        setSelectedMessage(`${dayjs(date).format("M월 D일")}에 완벽한 데이트 코스를 추천해드릴게요! 😊`);
     }
-  };
+};
   
   
 
