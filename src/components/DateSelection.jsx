@@ -10,6 +10,8 @@ export default function DateSelection({ selections, setSelections }) {
   const navigate = useNavigate();
   const [currentYearMonth, setCurrentYearMonth] = useState(dayjs());
   const [selectedDates, setSelectedDates] = useState(selections.date || []);
+  const [selectedRange, setSelectedRange] = useState([]);
+  const [isRangeMode, setIsRangeMode] = useState(false); // Toggle for single/range selection mode
   const [selectedMessage, setSelectedMessage] = useState(null);
 
   const handlePrevMonth = () => {
@@ -20,47 +22,48 @@ export default function DateSelection({ selections, setSelections }) {
     setCurrentYearMonth((prev) => prev.add(1, "month"));
   };
 
-  const formatDateRanges = (dates) => {
-    if (dates.length === 0) return "";
-
-    const sortedDates = dates.map((date) => dayjs(date)).sort((a, b) => a - b);
-
-    const ranges = [];
-    let start = sortedDates[0];
-    let end = sortedDates[0];
-
-    for (let i = 1; i < sortedDates.length; i++) {
-      const current = sortedDates[i];
-      const previous = sortedDates[i - 1];
-
-      if (current.diff(previous, "day") === 1) {
-        end = current;
-      } else {
-        ranges.push(start.isSame(end) ? start.format("M월 D일") : `${start.format("M월 D일")}~${end.format("M월 D일")}`);
-        start = current;
-        end = current;
-      }
-    }
-
-    ranges.push(start.isSame(end) ? start.format("M월 D일") : `${start.format("M월 D일")}~${end.format("M월 D일")}`);
-
-    return ranges.join(", ");
-  };
-
   const handleDateClick = (date) => {
-    const newDates = selectedDates.includes(date)
-      ? selectedDates.filter((d) => d !== date)
-      : [...selectedDates, date].sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? -1 : 1));
-
-    setSelectedDates(newDates);
-
-    if (newDates.length > 0) {
-      const formattedRanges = formatDateRanges(newDates);
-      setSelectedMessage(`${formattedRanges}에 완벽한 데이트 코스를 추천해드릴게요! 😊`);
+    if (isRangeMode) {
+      if (selectedRange.length === 0) {
+        // Start of the range
+        setSelectedRange([date]);
+        setSelectedDates([date]); // Show the first selected date
+        setSelectedMessage(`종료 날짜를 선택해주세요.`);
+      } else if (selectedRange.length === 1) {
+        // Complete the range
+        const startDate = dayjs(selectedRange[0]);
+        const endDate = dayjs(date);
+  
+        if (startDate.isBefore(endDate)) {
+          const range = [];
+          let current = startDate;
+  
+          // Fill dates between startDate and endDate
+          while (current.isBefore(endDate) || current.isSame(endDate)) {
+            range.push(current.format("YYYY-MM-DD"));
+            current = current.add(1, "day");
+          }
+  
+          setSelectedRange(range);
+          setSelectedDates(range);
+          setSelectedMessage(`${startDate.format("M월 D일")}~${endDate.format("M월 D일")}에 완벽한 데이트 코스를 추천해드릴게요! 😊`);
+        } else {
+          alert("시작 날짜보다 이후 날짜를 선택해주세요!");
+        }
+      } else {
+        // Reset the range if a new start is chosen
+        setSelectedRange([date]);
+        setSelectedDates([date]);
+        setSelectedMessage(`종료 날짜를 선택해주세요.`);
+      }
     } else {
-      setSelectedMessage(null);
+      // Single-date selection
+      setSelectedDates([date]);
+      setSelectedMessage(`${dayjs(date).format("M월 D일")}에 완벽한 데이트 코스를 추천해드릴게요! 😊`);
     }
   };
+  
+  
 
   const handleNext = () => {
     setSelections({ ...selections, date: selectedDates });
@@ -100,6 +103,32 @@ export default function DateSelection({ selections, setSelections }) {
 
       {/* 안내 메시지 */}
       <Instruction>데이트할 날짜를 선택해주세요! ❤️</Instruction>
+
+      {/* 선택 모드 전환 버튼 */}
+      <ToggleMode>
+        <ModeButton
+          isActive={!isRangeMode}
+          onClick={() => {
+            setIsRangeMode(false);
+            setSelectedDates([]);
+            setSelectedRange([]);
+            setSelectedMessage(null);
+          }}
+        >
+          단일 날짜 선택
+        </ModeButton>
+        <ModeButton
+          isActive={isRangeMode}
+          onClick={() => {
+            setIsRangeMode(true);
+            setSelectedDates([]);
+            setSelectedRange([]);
+            setSelectedMessage(null);
+          }}
+        >
+          기간 선택
+        </ModeButton>
+      </ToggleMode>
 
       {/* 년, 월 이동 */}
       <Header>
@@ -182,6 +211,27 @@ const Instruction = styled.div`
   margin-bottom: 20px;
   color: white;
   animation: ${fadeIn} 0.5s ease;
+`;
+
+const ToggleMode = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+`;
+
+const ModeButton = styled.button`
+  padding: 10px 20px;
+  background: ${(props) => (props.isActive ? "linear-gradient(135deg, #ff758c, #ff7eb3)" : "rgba(255, 255, 255, 0.3)")};
+  color: ${(props) => (props.isActive ? "white" : "#999")};
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const Header = styled.div`

@@ -4,22 +4,19 @@ import { useNavigate } from "react-router-dom";
 
 export default function TimeSelection({ selections, setSelections }) {
   const navigate = useNavigate();
-  const [selectedTimes, setSelectedTimes] = useState(selections.time || []);
+  const [selectedTime, setSelectedTime] = useState(selections.time || "");
 
   const handleTimeClick = (time) => {
-    const newTimes = selectedTimes.includes(time)
-      ? selectedTimes.filter((t) => t !== time)
-      : [...selectedTimes, time];
-    setSelectedTimes(newTimes);
+    setSelectedTime(time === selectedTime ? "" : time); // Toggle selection
   };
 
   const handleNext = () => {
-    setSelections({ ...selections, time: selectedTimes });
+    setSelections({ ...selections, time: selectedTime });
     navigate("/summary");
   };
 
   const handlePrev = () => {
-    setSelections({ ...selections, time: selectedTimes });
+    setSelections({ ...selections, time: selectedTime });
     navigate("/date");
   };
 
@@ -32,9 +29,9 @@ export default function TimeSelection({ selections, setSelections }) {
 
       {/* 안내 메시지 */}
       <Instruction>
-        {selectedTimes.length === 0
-          ? "데이트할 시간을 선택해주세요! ⏰"
-          : `선택된 시간: ${selectedTimes.join(", ")}`}
+        {selectedTime
+          ? `선택된 시간: ${selectedTime}~`
+          : "데이트 시작 시간을 선택해주세요! ⏰"}
       </Instruction>
 
       {/* 시간 선택 버튼 */}
@@ -44,10 +41,10 @@ export default function TimeSelection({ selections, setSelections }) {
           return (
             <TimeButton
               key={time}
-              isSelected={selectedTimes.includes(time)}
+              isSelected={selectedTime === time}
               onClick={() => handleTimeClick(time)}
             >
-              {time}
+              {time}~
             </TimeButton>
           );
         })}
@@ -56,7 +53,7 @@ export default function TimeSelection({ selections, setSelections }) {
       {/* 하단 버튼 */}
       <Footer>
         <PrevButton onClick={handlePrev}>이전</PrevButton>
-        <NextButton onClick={handleNext} disabled={selectedTimes.length === 0}>
+        <NextButton onClick={handleNext} disabled={!selectedTime}>
           선택
         </NextButton>
       </Footer>
@@ -72,6 +69,15 @@ const fadeIn = keyframes`
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+`;
+
+const scaleUp = keyframes`
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
   }
 `;
 
@@ -124,12 +130,19 @@ const TimeButton = styled.button`
     props.isSelected
       ? "linear-gradient(135deg, #ff758c, #ff7eb3)"
       : "rgba(255, 255, 255, 0.2)"};
-  color: ${(props) => (props.isSelected ? "white" : "white")};
+  color: white;
   font-size: 1rem;
   font-weight: ${(props) => (props.isSelected ? "bold" : "normal")};
   border: none;
   cursor: pointer;
   transition: all 0.3s;
+
+  ${(props) =>
+    props.isSelected &&
+    css`
+      animation: ${scaleUp} 0.3s ease-in-out infinite alternate;
+      box-shadow: 0px 4px 20px rgba(255, 118, 117, 0.9);
+    `}
 
   &:hover {
     background: ${(props) =>
@@ -138,12 +151,6 @@ const TimeButton = styled.button`
         : "rgba(255, 255, 255, 0.3)"};
     transform: scale(1.05);
   }
-
-  ${(props) =>
-    props.isSelected &&
-    css`
-      box-shadow: 0px 4px 15px rgba(255, 118, 117, 0.8);
-    `}
 `;
 
 const Footer = styled.div`
