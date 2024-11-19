@@ -11,9 +11,9 @@ app.use(express.json());
 app.post("/api/recommand", async (req, res) => {
   const { theme, date, time, loc } = req.body;
   try {
-    const courses = await getPlace(theme, loc);
-    if (courses) {
-      res.json({ date, time, loc, course: courses });
+    const places = await getPlace(theme, loc);
+    if (places) {
+      res.json({ date, time, loc, course: places });
     } else {
       res.status(500).json({ error: "fail" });
     }

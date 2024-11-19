@@ -30,7 +30,7 @@ const RecommendationItem = styled.li`
 
 export default function Recommand({ selections }) {
   //const { theme, date, time, location } = selections;
-  const [theme, date, time, location] = ["맛집", 12, 12, "강남구"];
+  const [theme, date, time, location] = ["FD6", 12, 12, "강남구"];
   const [recommandations, setRecommandations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(null);
