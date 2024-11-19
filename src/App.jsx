@@ -1,9 +1,14 @@
 import React, { useState } from "react";
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import ThemeSelection from "./components/ThemeSelection";
 import DateSelection from "./components/DateSelection";
 import TimeSelection from "./components/TimeSelection";
 import { createGlobalStyle } from "styled-components";
+import Recommand from "./routes/recommand";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -43,7 +48,7 @@ function NotFound() {
           cursor: "pointer",
           fontSize: "1rem",
         }}
-        onClick={() => window.location.href = "/theme"}
+        onClick={() => (window.location.href = "/theme")}
       >
         메인으로 돌아가기
       </button>
@@ -56,6 +61,7 @@ function App() {
     theme: [],
     date: "",
     time: [],
+    loction: [],
   });
 
   const router = createBrowserRouter([
@@ -66,32 +72,27 @@ function App() {
     {
       path: "/theme",
       element: (
-        <ThemeSelection
-          selections={selections}
-          setSelections={setSelections}
-        />
+        <ThemeSelection selections={selections} setSelections={setSelections} />
       ),
     },
     {
       path: "/date",
       element: (
-        <DateSelection
-          selections={selections}
-          setSelections={setSelections}
-        />
+        <DateSelection selections={selections} setSelections={setSelections} />
       ),
     },
     {
       path: "/time",
       element: (
-        <TimeSelection
-          selections={selections}
-          setSelections={setSelections}
-        />
+        <TimeSelection selections={selections} setSelections={setSelections} />
       ),
     },
     {
-      path: "*", 
+      path: "/recommand",
+      element: <Recommand selections={selections} />,
+    },
+    {
+      path: "*",
       element: <NotFound />,
     },
   ]);

@@ -7,7 +7,7 @@ async function getPlace(keyword, loc) {
     const res = await axios.get(
       "https://dapi.kakao.com/v2/local/search/keyword.json",
       {
-        headers: { Authorization: "KakaoAK ${apiKey}" },
+        headers: { Authorization: `KakaoAK ${apiKey}` },
         params: {
           query: keyword,
           x: 126.9784,
