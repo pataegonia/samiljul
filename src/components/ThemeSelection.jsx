@@ -14,13 +14,16 @@ export default function CourseSelection() {
   ];
 
   const handleCourseClick = (course) => {
-    setSelectedCourses((prev) =>
-      prev.includes(course) ? prev.filter((c) => c !== course) : [...prev, course]
-    );
+    if (selectedCourses.length >= 8) {
+      alert("최대 8개까지만 선택할 수 있습니다!");
+      return;
+    }
+
+    setSelectedCourses((prev) => [...prev, course]); // 중복 선택 허용
   };
 
-  const handleCancel = () => {
-    setSelectedCourses([]);
+  const handleReset = () => {
+    setSelectedCourses([]); // 선택 초기화
   };
 
   const handleNext = () => {
@@ -66,7 +69,7 @@ export default function CourseSelection() {
             <h3>선택한 데이트 코스</h3>
             <CourseFlow>
               {selectedCourses.map((course, index) => (
-                <CourseFlowItem key={index}>
+                <CourseFlowItem key={`${course}-${index}`}>
                   <FlowIcon>{courses.find((c) => c.name === course).icon}</FlowIcon>
                   <FlowName>{course}</FlowName>
                   {index < selectedCourses.length - 1 && <FlowArrow>➜</FlowArrow>}
@@ -79,7 +82,7 @@ export default function CourseSelection() {
 
       {/* 하단 버튼 */}
       <Footer>
-        <CancelButton onClick={handleCancel}>취소</CancelButton>
+        <ResetButton onClick={handleReset}>초기화</ResetButton>
         <NextButton onClick={handleNext} disabled={selectedCourses.length === 0}>
           다음
         </NextButton>
@@ -97,21 +100,6 @@ const fadeIn = keyframes`
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-`;
-
-const pulse = keyframes`
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  }
-  50% {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   }
 `;
 
@@ -247,10 +235,10 @@ const Footer = styled.div`
   width: 100%;
 `;
 
-const CancelButton = styled.button`
+const ResetButton = styled.button`
   padding: 10px 20px;
   font-size: 1em;
-  background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+  background: linear-gradient(135deg, #ff7eb3, #ff758c);
   color: white;
   border: none;
   border-radius: 30px;
@@ -266,7 +254,9 @@ const NextButton = styled.button`
   padding: 15px 30px;
   font-size: 1.2em;
   background: ${(props) =>
-    props.disabled ? "rgba(255, 255, 255, 0.3)" : "linear-gradient(135deg, #6a11cb, #2575fc)"};
+    props.disabled
+      ? "rgba(255, 255, 255, 0.3)"
+      : "linear-gradient(135deg, #6a11cb, #2575fc)"};
   color: ${(props) => (props.disabled ? "#999" : "white")};
   border: none;
   border-radius: 30px;
