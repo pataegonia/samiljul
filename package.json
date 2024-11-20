@@ -14,9 +14,15 @@
     "cors": "^2.8.5",
     "dayjs": "1.11.13",
     "express": "^4.21.1",
+    "firebase-admin": "^13.0.0",
     "flatpickr": "4.6.13",
     "node": "^23.2.0",
+<<<<<<< HEAD
     "rc-slider": "^11.1.7",
+=======
+    "node-schedule": "^2.1.1",
+    "puppeteer": "^23.8.0",
+>>>>>>> master_p
     "react": "^18.3.1",
     "react-datepicker": "^7.5.0",
     "react-dom": "^18.3.1",
