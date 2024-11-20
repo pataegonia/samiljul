@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "rc-slider/assets/index.css";
+import Slider from "rc-slider";
 
 // 시간에 따른 추천 메시지 제공 함수
 const getRecommendation = (startTime, endTime) => {
@@ -19,7 +21,6 @@ const getRecommendation = (startTime, endTime) => {
   }
 };
 
-// 메인 컴포넌트
 export default function TimeSelection({ selections, setSelections }) {
   const navigate = useNavigate();
   const [startTime, setStartTime] = useState(selections.startTime || 6);
@@ -35,6 +36,11 @@ export default function TimeSelection({ selections, setSelections }) {
     navigate("/date");
   };
 
+  const handleSliderChange = ([newStart, newEnd]) => {
+    setStartTime(newStart);
+    setEndTime(newEnd);
+  };
+
   const recommendation = getRecommendation(startTime, endTime);
 
   return (
@@ -47,47 +53,29 @@ export default function TimeSelection({ selections, setSelections }) {
       <Instruction>{`선택된 시간: ${startTime}:00 ~ ${endTime}:00`}</Instruction>
 
       <SliderWrapper>
-        {/* 시작 시간 슬라이더 */}
-        <TimeLabel>시작 시간</TimeLabel>
-        <Tooltip position={(startTime / 24) * 100}>{`${startTime}:00`}</Tooltip>
-        <Slider
-          type="range"
-          min="0"
-          max="23"
-          value={startTime}
-          start={startTime}
-          end={endTime}
-          onChange={(e) => {
-            const value = parseInt(e.target.value);
-            if (value < endTime) setStartTime(value);
-          }}
+        <StyledSlider
+          range
+          min={0}
+          max={24}
+          step={1}
+          defaultValue={[startTime, endTime]}
+          onChange={handleSliderChange}
+          trackStyle={[{ backgroundColor: "#ff758c" }]}
+          handleStyle={[
+            { borderColor: "#ff758c", backgroundColor: "white" },
+            { borderColor: "#ff758c", backgroundColor: "white" },
+          ]}
         />
+        <TimeLabels>
+          <TimeLabel position={(startTime / 24) * 100}>{`${startTime}:00`}</TimeLabel>
+          <TimeLabel position={(endTime / 24) * 100}>{`${endTime}:00`}</TimeLabel>
+        </TimeLabels>
       </SliderWrapper>
 
-      <SliderWrapper>
-        {/* 종료 시간 슬라이더 */}
-        <TimeLabel>종료 시간</TimeLabel>
-        <Tooltip position={(endTime / 24) * 100}>{`${endTime}:00`}</Tooltip>
-        <Slider
-          type="range"
-          min="1"
-          max="24"
-          value={endTime}
-          start={startTime}
-          end={endTime}
-          onChange={(e) => {
-            const value = parseInt(e.target.value);
-            if (value > startTime) setEndTime(value);
-          }}
-        />
-      </SliderWrapper>
-
-      {/* 추천 메시지 박스 */}
       <RecommendationBox>
         <RecommendationText>{recommendation}</RecommendationText>
       </RecommendationBox>
 
-      {/* 이전 / 선택 버튼 */}
       <Footer>
         <PrevButton onClick={handlePrev}>이전</PrevButton>
         <NextButton onClick={handleNext}>선택</NextButton>
@@ -96,7 +84,6 @@ export default function TimeSelection({ selections, setSelections }) {
   );
 }
 
-// 스타일 컴포넌트
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -133,14 +120,32 @@ const Instruction = styled.div`
 
 const SliderWrapper = styled.div`
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 30px;
   width: 80%;
+  margin-bottom: 40px;
 `;
 
-const Tooltip = styled.div`
+const StyledSlider = styled(Slider)`
+  .rc-slider-rail {
+    background-color: #d3d3d3;
+  }
+
+  .rc-slider-track {
+    background-color: #ff758c;
+  }
+
+  .rc-slider-handle {
+    border: 2px solid #ff758c;
+    background: white;
+    cursor: pointer;
+  }
+`;
+
+const TimeLabels = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const TimeLabel = styled.div`
   position: absolute;
   top: -30px;
   left: ${(props) => props.position}%;
@@ -151,44 +156,6 @@ const Tooltip = styled.div`
   border-radius: 5px;
   font-size: 0.8rem;
   font-weight: bold;
-`;
-
-const TimeLabel = styled.div`
-  font-size: 1rem;
-  margin-bottom: 10px;
-  font-weight: 600;
-`;
-
-const Slider = styled.input`
-  width: 100%;
-  appearance: none;
-  height: 10px;
-  background: linear-gradient(
-    to right,
-    #d3d3d3 0%,
-    #d3d3d3 ${(props) => (props.start / 24) * 100}%,
-    #ff758c ${(props) => (props.start / 24) * 100}%,
-    #ff758c ${(props) => (props.end / 24) * 100}%,
-    #d3d3d3 ${(props) => (props.end / 24) * 100}%,
-    #d3d3d3 100%
-  );
-  border-radius: 5px;
-  outline: none;
-
-  &::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border: 2px solid #ff758c;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: transform 0.3s;
-
-    &:hover {
-      transform: scale(1.2);
-    }
-  }
 `;
 
 const RecommendationBox = styled.div`
