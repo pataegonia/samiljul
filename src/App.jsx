@@ -9,6 +9,7 @@ import DateSelection from "./components/DateSelection";
 import TimeSelection from "./components/TimeSelection";
 import { createGlobalStyle } from "styled-components";
 import Recommand from "./routes/recommand";
+import Map from "./routes/map";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -61,7 +62,7 @@ function App() {
     theme: [],
     date: "",
     time: [],
-    loction: [],
+    location: [],
   });
 
   const router = createBrowserRouter([
@@ -90,6 +91,10 @@ function App() {
     {
       path: "/recommand",
       element: <Recommand selections={selections} />,
+    },
+    {
+      path: "/map",
+      element: <Map selections={selections} setSelections={setSelections} />,
     },
     {
       path: "*",

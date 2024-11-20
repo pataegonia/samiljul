@@ -16,19 +16,20 @@
     "express": "^4.21.1",
     "firebase-admin": "^13.0.0",
     "flatpickr": "4.6.13",
+    "leaflet": "^1.9.4",
     "node": "^23.2.0",
-<<<<<<< HEAD
-    "rc-slider": "^11.1.7",
-=======
     "node-schedule": "^2.1.1",
     "puppeteer": "^23.8.0",
->>>>>>> master_p
+    "rc-slider": "^11.1.7",
     "react": "^18.3.1",
     "react-datepicker": "^7.5.0",
     "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.14.2",
+    "react-scripts": "^5.0.1",
     "styled-components": "^6.1.13",
-    "styled-reset": "4.5.2"
+    "styled-reset": "4.5.2",
+    "web-vitals": "^4.2.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

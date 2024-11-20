@@ -28,7 +28,7 @@ export default function TimeSelection({ selections, setSelections }) {
 
   const handleNext = () => {
     setSelections({ ...selections, startTime, endTime });
-    navigate("/summary");
+    navigate("/map");
   };
 
   const handlePrev = () => {
