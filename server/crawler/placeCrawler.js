@@ -6,23 +6,18 @@ async function crwaling(url) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto(url, { waitUntil: "load", timeout: 0 });
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 0 });
 
     const rating = await page.evaluate(() => {
-      const element = document.querySelector(".grade-star-num");
-      return element ? element.innerText.trim() : "N/A";
-    });
-
-    const hours = await page.evaluate(() => {
-      const element = document.querySelector(".openhour-info .time");
+      const element = document.querySelector("em.num_rate");
       return element ? element.innerText.trim() : "N/A";
     });
     await browser.close();
 
-    return { rating, hours };
+    return { rating };
   } catch (err) {
     console.error(err);
-    return { rating: "N/A", hours: "N/A" };
+    return { rating: "N/A" };
   }
 }
 
