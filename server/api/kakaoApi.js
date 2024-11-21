@@ -14,8 +14,8 @@ async function fetchPlace(categoryCode, loc) {
           headers: { Authorization: `KakaoAK ${apiKey}` },
           params: {
             category_group_code: categoryCode,
-            x: 126.9784,
-            y: 37.5663,
+            x: loc.position[1],
+            y: loc.position[0],
             radius: 5000,
             size,
             page,

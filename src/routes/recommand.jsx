@@ -29,8 +29,8 @@ const RecommendationItem = styled.li`
 `;
 
 export default function Recommand({ selections }) {
-  //const { theme, date, time, location } = selections;
-  const [theme, date, time, location] = ["FD6", 12, 12, "강남구"];
+  console.log(selections);
+  const { theme, date, time, location } = selections;
   const [recommandations, setRecommandations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(null);
@@ -42,7 +42,8 @@ export default function Recommand({ selections }) {
       if (Array.isArray(cateogy)) {
         filteredPlace[key] = cateogy.filter(
           (item) =>
-            item.road_address_name && item.road_address_name.includes("종로구")
+            item.road_address_name &&
+            item.road_address_name.includes(location.name)
         );
       }
     });

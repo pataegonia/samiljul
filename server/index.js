@@ -27,68 +27,99 @@ async function crawlAndSave(category, urls) {
 
       const placeId = url.split("/").pop();
       console.log(`Saving to Firestore: ${category} - ${placeId}`);
-      await db.collection(category).doc(placeId).set({
-        url,
-        rating,
-        updateAt: new Date().toISOString(),
-      });
+
+      const docRef = db.collection(category).doc(placeId);
+      const doc = await docRef.get();
+
+      if (doc.exists) {
+        const existingData = doc.data();
+        await docRef.set({
+          url,
+          rating: rating !== "N/A" ? rating : existingData.rating,
+          updateAt: new Date().toISOString(),
+        });
+      } else {
+        await docRef.set({
+          url,
+          rating,
+          updateAt: new Date().toISOString(),
+        });
+      }
     }
   } catch (err) {
     console.error(err);
   }
 }
 
-app.post("/api/recommand", async (req, res) => {
-  const { theme, date, time, loc } = req.body;
-  try {
-    const places = await getPlace(loc);
-    if (places) {
-      const categories = ["AT4", "CE7", "FD6", "CT1"];
-      const updatedPlaces = {};
+async function fetchFirestoreData(category, size = 500) {
+  const results = [];
+  let lastDoc = null;
 
-      for (const category of categories) {
-        if (places[category]) {
-          updatedPlaces[category] = await Promise.all(
-            places[category].map(async (place) => {
-              const placeId = place.id;
-              const docRef = db.collection(category).doc(placeId);
-              const doc = await docRef.get();
+  while (1) {
+    let query = db
+      .collection(category)
+      .select("rating", "updateAt")
+      .limit(size);
 
-              let rating = "N/A";
-              if (doc.exists) {
-                const data = doc.data();
-                rating = data.rating || "N/A";
-              }
+    if (lastDoc) {
+      query = query.startAfter(lastDoc);
+    }
 
-              return {
-                category_name: place.category_name,
-                id: place.id,
-                phone: place.phone,
-                place_name: place.place_name,
-                place_url: place.place_url,
-                road_address_name: place.road_address_name,
-                rating,
-              };
-            })
-          );
-        } else {
-          updatedPlaces[category] = [];
-        }
+    const snapshot = await query.get();
+    snapshot.forEach((doc) => {
+      results.push({ id: doc.id, ...doc.data() });
+    });
+
+    if (snapshot.size < size) break;
+    lastDoc = snapshot.docs[snapshot.doc.length - 1];
+  }
+
+  return results;
+}
+
+async function updatePlaceFire(places) {
+  const categories = ["AT4", "CE7", "FD6", "CT1"];
+  const updatedPlaces = {};
+
+  for (const category of categories) {
+    if (places[category]) {
+      const firesotreData = await fetchFirestoreData(category);
+
+      updatedPlaces[category] = places[category].map((place) => {
+        const matchedData = firesotreData.find((data) => data.id === place.id);
+        return {
+          ...place,
+          rating: matchedData ? matchedData.rating : "N/A",
+        };
+      });
+
+      if (category === "CE7") {
+        const leisurePlaces = updatedPlaces["CE7"].filter((place) =>
+          place.category_name.includes("여가시설")
+        );
+
+        updatedPlaces["CE7"] = updatedPlaces["CE7"].filter(
+          (place) =>
+            !place.category_name.includes("여가시설") &&
+            place.category_name.includes("카페")
+        );
       }
+    } else {
+      updatedPlaces[category] = [];
+    }
+  }
 
-      const leisurePlaces = updatedPlaces["CE7"].filter((place) =>
-        place.category_name.includes("여가시설")
-      );
+  return updatedPlaces;
+}
 
-      updatedPlaces["CT1"] = [...updatedPlaces["CT1"], ...leisurePlaces];
-
-      updatedPlaces["CE7"] = updatedPlaces["CE7"].filter(
-        (place) => !place.category_name.includes("여가시설")
-      );
-      updatedPlaces["CE7"] = updatedPlaces["CE7"].filter((place) =>
-        place.category_name.includes("카페")
-      );
-      res.json({ date, time, loc, course: updatedPlaces });
+app.post("/api/recommand", async (req, res) => {
+  const { theme, date, time, location } = req.body;
+  console.log("location:", location);
+  try {
+    const places = await getPlace(location);
+    if (places) {
+      const updatedPlaces = await updatePlaceFire(places);
+      res.json({ date, time, location, course: updatedPlaces });
     } else {
       res.status(500).json({ error: "fail" });
     }
@@ -99,8 +130,6 @@ app.post("/api/recommand", async (req, res) => {
 });
 
 app.post("/api/crawl-now", async (req, res) => {
-  console.log("cn");
-  console.log(Object.entries(Urls));
   try {
     for (const [category, urls] of Object.entries(Urls)) {
       if (urls && urls.length > 0) {
