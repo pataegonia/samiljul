@@ -80,7 +80,7 @@ const Map = ({ selections, setSelections }) => {
           setSelections({ ...selections, location: selectedDistrict });
         }
 
-        navigate(`/samiljul/recommand`); // 추천 페이지로 이동
+        navigate(`/recommand`); // 추천 페이지로 이동
       },
     });
   };
@@ -95,7 +95,7 @@ const Map = ({ selections, setSelections }) => {
   };
 
   const handlePrev = () => {
-    navigate("/samiljul/time"); // 이전 페이지로 이동
+    navigate("/time"); // 이전 페이지로 이동
   };
 
   return (
@@ -157,7 +157,7 @@ const Map = ({ selections, setSelections }) => {
                 );
                 if (selectedDistrict) {
                   setSelections({ ...selections, location: selectedDistrict });
-                  navigate(`/samiljul/recommand`); // 추천 페이지로 이동
+                  navigate(`/recommand`); // 추천 페이지로 이동
                 }
               },
               mouseover: () => {

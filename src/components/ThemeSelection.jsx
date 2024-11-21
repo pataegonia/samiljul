@@ -47,7 +47,7 @@ export default function ThemeSelection({ selections, setSelections }) {
   const handleNext = () => {
     if (selectedThemes.length > 0) {
       setSelections({ ...selections, theme: selectedThemes });
-      navigate("/samiljul/date");
+      navigate("/date");
     } else {
       alert("최소 하나 이상의 테마를 선택해주세요!!");
     }

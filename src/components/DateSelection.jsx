@@ -74,12 +74,12 @@ export default function DateSelection({ selections, setSelections }) {
 
   const handleNext = () => {
     setSelections({ ...selections, date: selectedDates });
-    navigate("/samiljul/time");
+    navigate("/time");
   };
 
   const handlePrev = () => {
     setSelections({ ...selections, date: selectedDates });
-    navigate("/samiljul/theme");
+    navigate("/theme");
   };
 
   const generateCalendar = () => {

@@ -31,12 +31,12 @@ export default function TimeSelection({ selections, setSelections }) {
 
   const handleNext = () => {
     setSelections({ ...selections, startTime, endTime });
-    navigate("/samiljul/map");
+    navigate("/map");
   };
 
   const handlePrev = () => {
     setSelections({ ...selections, startTime, endTime });
-    navigate("/samiljul/date");
+    navigate("/date");
   };
 
   const handleSliderChange = ([newStart, newEnd]) => {
