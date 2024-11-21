@@ -61,7 +61,8 @@ function App() {
   const [selections, setSelections] = useState({
     theme: [],
     date: "",
-    time: [],
+    startTime: 0,
+    endTime: 0,
     location: [],
   });
 
