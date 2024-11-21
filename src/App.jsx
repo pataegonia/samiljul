@@ -49,7 +49,7 @@ function NotFound() {
           cursor: "pointer",
           fontSize: "1rem",
         }}
-        onClick={() => (window.location.href = "/theme")}
+        onClick={() => (window.location.href = "/samiljul/theme")}
       >
         메인으로 돌아가기
       </button>
