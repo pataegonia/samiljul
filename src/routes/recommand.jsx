@@ -22,7 +22,7 @@ export default function Recommand({ selections }) {
       setErr(null);
 
       try {
-        const res = await axios.post("http://localhost:5000/api/recommand", {
+        const res = await axios.post("http://localhost:4000/api/recommand", {
           theme,
           date,
           time,
