@@ -70,7 +70,7 @@ function App() {
     [
       {
         path: "/",
-        element: <Navigate to="/theme" replace />,
+        element: <Navigate to="/samiljul/theme" replace />,
       },
       {
         path: "/theme",
