@@ -95,7 +95,7 @@ const Map = ({ selections, setSelections }) => {
   };
 
   const handlePrev = () => {
-    navigate("/time"); // 이전 페이지로 이동
+    navigate("/date"); // 이전 페이지로 이동
   };
 
   return (

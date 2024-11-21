@@ -68,7 +68,7 @@ export default function DateSelection({ selections, setSelections }) {
 
   const handleNext = () => {
     setSelections({ ...selections, date: selectedDates });
-    navigate("/time");
+    navigate("/map");
   };
 
   const handlePrev = () => {
