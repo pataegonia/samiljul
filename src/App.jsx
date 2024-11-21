@@ -49,7 +49,7 @@ function NotFound() {
           cursor: "pointer",
           fontSize: "1rem",
         }}
-        onClick={() => (window.location.href = "/samiljul/theme")}
+        onClick={() => (window.location.href = "/theme")}
       >
         메인으로 돌아가기
       </button>
@@ -69,7 +69,7 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/samiljul",
-      element: <Navigate to="/theme" replace />,
+      element: <Navigate to="/samiljul/theme" replace />,
     },
     {
       path: "/samiljul/theme",
