@@ -49,7 +49,7 @@ export default function ThemeSelection({ selections, setSelections }) {
       setSelections({ ...selections, theme: selectedThemes });
       navigate("/samiljul/date");
     } else {
-      alert("최소 하나 이상의 테마를 선택해주세요!");
+      alert("최소 하나 이상의 테마를 선택해주세요!!");
     }
   };
 
