@@ -1,89 +1,84 @@
 import React, { useState } from "react";
-import styled, { keyframes, css } from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-export default function CourseSelection() {
+export default function ThemeSelection({ selections, setSelections }) {
   const navigate = useNavigate();
-  const [selectedCourses, setSelectedCourses] = useState([]);
+  const [selectedThemes, setSelectedThemes] = useState(selections.theme || []);
 
-  const courses = [
-    { name: "음식점", description: "다양한 맛집을 탐방하세요.", icon: "🍴" },
-    { name: "카페", description: "여유로운 카페 탐방을 떠나보세요.", icon: "☕" },
-    { name: "관광명소", description: "주변의 멋진 관광명소를 발견하세요.", icon: "🗺️" },
-    { name: "문화시설", description: "박물관, 공연 등을 즐겨보세요.", icon: "🎭" },
+  const themes = [
+    { name: "음식점", description: "다양한 맛집을 탐방하세요.", icon: "🍴", code:"FD6"},
+    { name: "카페", description: "여유로운 카페 탐방을 떠나보세요.", icon: "☕", code:"CE7" },
+    { name: "관광명소", description: "주변의 멋진 관광명소를 발견하세요.", icon: "🗺️", code:"AT4" },
+    { name: "문화시설", description: "박물관, 공연 등을 즐겨보세요.", icon: "🎭", code:"CT1"},
   ];
 
-  const handleCourseClick = (course) => {
-    if (selectedCourses.length >= 8) {
+  // 테마 선택 처리
+  const handleThemeClick = (theme) => {
+    if (selectedThemes.length >= 8) {
       alert("최대 8개까지만 선택할 수 있습니다!");
       return;
     }
 
-    setSelectedCourses((prev) => [...prev, course]); // 중복 선택 허용
-  };
-
-  const handleReset = () => {
-    setSelectedCourses([]); // 선택 초기화
+    // 중복 허용: 선택한 순서대로 배열에 추가
+    setSelectedThemes((prev) => [...prev, theme]);
   };
 
   const handleNext = () => {
-    if (selectedCourses.length > 0) {
-      navigate("/date", { state: { courses: selectedCourses } });
+    if (selectedThemes.length > 0) {
+      setSelections({ ...selections, theme: selectedThemes });
+      navigate("/date");
     } else {
-      alert("코스를 최소 하나 이상 선택해주세요!");
+      alert("최소 하나 이상의 테마를 선택해주세요!");
     }
+  };
+
+  const handleReset = () => {
+    setSelectedThemes([]); // 선택 초기화
   };
 
   return (
     <Container>
-      {/* 환영 메시지 */}
+      {/* 안내 메시지 */}
       <WelcomeMessage>
-        <h1>데이트 코스 추천 서비스에 오신 것을 환영합니다! 💕</h1>
-        <p>
-          당신만의 특별한 데이트를 위한 맞춤형 코스를 추천해드립니다.
-          <br />
-          원하는 코스를 선택하고, 순서대로 구성된 맞춤형 플랜을 확인해보세요!
-        </p>
+        <h1>데이트 테마를 선택해주세요! 💕</h1>
+        <p>여러 테마를 선택하여 당신만의 특별한 데이트를 구성해보세요!</p>
       </WelcomeMessage>
 
-      {/* 선택 섹션 */}
-      <Content>
-        <Question>어떤 코스를 선택하시겠습니까?</Question>
-        <ButtonGroup>
-          {courses.map((course) => (
-            <CourseCard
-              key={course.name}
-              onClick={() => handleCourseClick(course.name)}
-              isSelected={selectedCourses.includes(course.name)}
-            >
-              <CourseIcon>{course.icon}</CourseIcon>
-              <CourseName>{course.name}</CourseName>
-              <Description>{course.description}</Description>
-            </CourseCard>
-          ))}
-        </ButtonGroup>
+      {/* 테마 선택 UI */}
+      <ButtonGroup>
+        {themes.map((theme) => (
+          <CourseCard
+            key={`${theme.name}-${Math.random()}`}
+            onClick={() => handleThemeClick(theme.code)}
+            isSelected={selectedThemes.includes(theme.code)}
+          >
+            <CourseIcon>{theme.icon}</CourseIcon>
+            <CourseName>{theme.name}</CourseName>
+            <Description>{theme.description}</Description>
+          </CourseCard>
+        ))}
+      </ButtonGroup>
 
-        {/* 시각적 플로우 */}
-        {selectedCourses.length > 0 && (
-          <SelectedCourses>
-            <h3>선택한 데이트 코스</h3>
-            <CourseFlow>
-              {selectedCourses.map((course, index) => (
-                <CourseFlowItem key={`${course}-${index}`}>
-                  <FlowIcon>{courses.find((c) => c.name === course).icon}</FlowIcon>
-                  <FlowName>{course}</FlowName>
-                  {index < selectedCourses.length - 1 && <FlowArrow>➜</FlowArrow>}
-                </CourseFlowItem>
-              ))}
-            </CourseFlow>
-          </SelectedCourses>
-        )}
-      </Content>
+      {/* 선택된 테마 목록 표시 */}
+      {selectedThemes.length > 0 && (
+        <SelectedCourses>
+          <h3>선택한 데이트 코스</h3>
+          <CourseFlow>
+            {selectedThemes.map((theme, index) => (
+              <CourseFlowItem key={index}>
+                {theme}
+                {index < selectedThemes.length - 1 && <FlowArrow>➜</FlowArrow>}
+              </CourseFlowItem>
+            ))}
+          </CourseFlow>
+        </SelectedCourses>
+      )}
 
-      {/* 하단 버튼 */}
+      {/* 초기화 및 다음 버튼 */}
       <Footer>
         <ResetButton onClick={handleReset}>초기화</ResetButton>
-        <NextButton onClick={handleNext} disabled={selectedCourses.length === 0}>
+        <NextButton onClick={handleNext} disabled={selectedThemes.length === 0}>
           다음
         </NextButton>
       </Footer>
@@ -91,11 +86,11 @@ export default function CourseSelection() {
   );
 }
 
-// 애니메이션
+// 스타일 코드 (기존 UI 유지)
 const fadeIn = keyframes`
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -103,7 +98,6 @@ const fadeIn = keyframes`
   }
 `;
 
-// 스타일링
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -132,17 +126,6 @@ const WelcomeMessage = styled.div`
     font-size: 1.2em;
     color: #f5f5f5;
   }
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Question = styled.h2`
-  font-size: 1.8em;
-  margin-bottom: 20px;
 `;
 
 const ButtonGroup = styled.div`
@@ -210,15 +193,6 @@ const CourseFlowItem = styled.div`
     transform: scale(1.1);
     transition: transform 0.2s ease-in-out;
   }
-`;
-
-const FlowIcon = styled.div`
-  font-size: 2em;
-`;
-
-const FlowName = styled.div`
-  margin-top: 5px;
-  font-size: 1.1em;
 `;
 
 const FlowArrow = styled.div`
