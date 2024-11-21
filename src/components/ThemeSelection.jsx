@@ -60,20 +60,23 @@ export default function ThemeSelection({ selections, setSelections }) {
         ))}
       </ButtonGroup>
 
-      {/* 선택된 테마 목록 표시 */}
       {selectedThemes.length > 0 && (
-        <SelectedCourses>
-          <h3>선택한 데이트 코스</h3>
-          <CourseFlow>
-            {selectedThemes.map((theme, index) => (
-              <CourseFlowItem key={index}>
-                {theme}
-                {index < selectedThemes.length - 1 && <FlowArrow>➜</FlowArrow>}
-              </CourseFlowItem>
-            ))}
-          </CourseFlow>
-        </SelectedCourses>
-      )}
+  <SelectedCourses>
+    <h3>선택한 데이트 코스</h3>
+    <CourseFlow>
+      {selectedThemes.map((themeCode, index) => {
+        const theme = themes.find((t) => t.code === themeCode); // 코드로 테마 찾기
+        return (
+          <CourseFlowItem key={index}>
+            <CourseIcon>{theme.icon}</CourseIcon>
+            <CourseName>{theme.name}</CourseName> {/* 이모티콘 + 텍스트 */}
+            {index < selectedThemes.length - 1 && <FlowArrow>➜</FlowArrow>} {/* 화살표 */}
+          </CourseFlowItem>
+        );
+      })}
+    </CourseFlow>
+  </SelectedCourses>
+)}
 
       {/* 초기화 및 다음 버튼 */}
       <Footer>
@@ -155,12 +158,12 @@ const CourseCard = styled.div`
 `;
 
 const CourseIcon = styled.div`
-  font-size: 2.5em;
+  font-size: 1.5em;
   margin-bottom: 10px;
 `;
 
 const CourseName = styled.h3`
-  font-size: 1.2em;
+  font-size: 1.0em;
   margin-bottom: 5px;
 `;
 
@@ -183,8 +186,8 @@ const CourseFlow = styled.div`
 
 const CourseFlowItem = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 10px; /* 아이콘과 텍스트 간격 */
   font-size: 1.2em;
   margin: 0 10px;
   animation: ${fadeIn} 0.5s ease-in-out;
@@ -197,10 +200,9 @@ const CourseFlowItem = styled.div`
 
 const FlowArrow = styled.div`
   font-size: 1.5em;
-  margin: 0 5px;
+  margin: 0 10px;
   color: rgba(255, 255, 255, 0.8);
 `;
-
 const Footer = styled.div`
   margin-top: 40px;
   display: flex;

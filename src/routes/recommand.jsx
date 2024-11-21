@@ -156,7 +156,6 @@ const Arrow = styled.div`
 `;
 
 export default function Recommand({ selections }) {
-  console.log(selections);
   const { theme, date, time, location } = selections;
   const [recommandations, setRecommandations] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -193,50 +192,13 @@ export default function Recommand({ selections }) {
 
     return selectedReco;
   }
+  const navigate = useNavigate();
 
-  function extractPlaces(course) {
-    const filteredPlace = {};
-
-    Object.entries(course).forEach(([key, category]) => {
-      if (Array.isArray(category)) {
-        filteredPlace[key] = category
-          .filter(
-            (item) =>
-              item.road_address_name &&
-              item.road_address_name.includes(location.name)
-          )
-          .map((place) => ({
-            category_name: place.category_name,
-            id: place.id,
-            phone: place.phone,
-            place_name: place.place_name,
-            place_url: place.place_url,
-            rating: place.rating || "N/A",
-            road_address_name: place.road_address_name,
-          }));
-      } else {
-        filteredPlace[key] = [];
-      }
-    });
-    return filteredPlace;
-  }
-
-  function getTopRatedPlaces(filteredPlaces) {
-    const topRatedPlaces = {};
-
-    Object.entries(filteredPlaces).forEach(([category, places]) => {
-      if (Array.isArray(places)) {
-        topRatedPlaces[category] = places
-          .filter((place) => place.rating !== "N/A")
-          .sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating))
-          .slice(0, 10);
-      } else {
-        topRatedPlaces[category] = [];
-      }
-    });
-
-    return topRatedPlaces;
-  }
+  const getRandomPlace = (places) => {
+    if (!Array.isArray(places) || places.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * places.length);
+    return places[randomIndex];
+  };
 
   function getResArr(selections, recommandations) {
     const resArr = [];
@@ -277,7 +239,7 @@ export default function Recommand({ selections }) {
       setLoading(true);
       setErr(null);
       try {
-        const res = await axios.post("http://localhost:5000/api/recommand", {
+        const res = await axios.post("http://localhost:4000/api/recommand", {
           theme,
           date,
           time,
@@ -289,7 +251,8 @@ export default function Recommand({ selections }) {
         const resArr = resBatch(selections, resObj, 5);
         setRecommandations(resArr);
       } catch (error) {
-        setErr("fail to load");
+        console.error("API 호출 에러:", error);
+        setErr("데이터를 불러오지 못했습니다.");
       } finally {
         setLoading(false);
       }

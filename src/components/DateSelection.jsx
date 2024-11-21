@@ -97,10 +97,6 @@ export default function DateSelection({ selections, setSelections }) {
 
   return (
     <Container>
-      {/* 진행 바 */}
-      <ProgressBar>
-        <Progress style={{ width: "66%" }} />
-      </ProgressBar>
 
       {/* 안내 메시지 */}
       <Instruction>데이트할 날짜를 선택해주세요! ❤️</Instruction>
@@ -190,6 +186,7 @@ const Container = styled.div`
   background: linear-gradient(135deg, #6a11cb, #2575fc);
   font-family: "Pretendard", sans-serif;
   color: white;
+  padding-top: 40px; /* 상단 여백 추가 */
 `;
 
 const ProgressBar = styled.div`
@@ -207,9 +204,9 @@ const Progress = styled.div`
 `;
 
 const Instruction = styled.div`
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 40px; /* 하단 여백 추가 */
   color: white;
   animation: ${fadeIn} 0.5s ease;
 `;
@@ -217,8 +214,9 @@ const Instruction = styled.div`
 const ToggleMode = styled.div`
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px; /* 추가 여백 */
 `;
+
 
 const ModeButton = styled.button`
   padding: 10px 20px;
@@ -266,6 +264,7 @@ const Calendar = styled.div`
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
   width: 90%;
+  margin-top: 20px; /* 상단 여백 추가 */
 `;
 
 const DayHeader = styled.div`
@@ -317,7 +316,7 @@ const Message = styled.div`
 `;
 
 const Footer = styled.div`
-  margin-top: 20px;
+  margin-top: 40px; /* 달력과 버튼 사이 여백 추가 */
   display: flex;
   justify-content: space-between;
   width: 90%;
