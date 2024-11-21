@@ -285,8 +285,7 @@ export default function Recommand({ selections }) {
         });
         const places = extractPlaces(res.data.course);
         const topRatedPlaces = getTopRatedPlaces(places);
-        const resObj = randomRecommend(topRatedPlaces, numOfCategory);
-        const resArr = resBatch(selections, resObj, 5);
+        const resArr = resBatch(selections, topRatedPlaces, 5);
         setRecommandations(resArr);
       } catch (error) {
         setErr("fail to load");
