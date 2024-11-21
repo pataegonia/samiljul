@@ -2,6 +2,7 @@ const { copyFileSync } = require("fs");
 const puppeteer = require("puppeteer");
 
 async function crwaling(url) {
+  console.log(`crawl: ${url}`);
   try {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();

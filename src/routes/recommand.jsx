@@ -35,6 +35,20 @@ export default function Recommand({ selections }) {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState(null);
 
+  function extractPlaces(course) {
+    const filteredPlace = {};
+
+    Object.entries(course).forEach(([key, cateogy]) => {
+      if (Array.isArray(cateogy)) {
+        filteredPlace[key] = cateogy.filter(
+          (item) =>
+            item.road_address_name && item.road_address_name.includes("종로구")
+        );
+      }
+    });
+    return filteredPlace;
+  }
+
   useEffect(() => {
     const fetchRecommandations = async () => {
       setLoading(true);
@@ -47,7 +61,8 @@ export default function Recommand({ selections }) {
           time,
           location,
         });
-        setRecommandations(res.data.course);
+        const places = extractPlaces(res.data.course);
+        setRecommandations(places);
       } catch (error) {
         setErr("fail to load");
       } finally {

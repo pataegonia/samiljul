@@ -44,21 +44,73 @@ app.post("/api/recommand", async (req, res) => {
     const places = await getPlace(loc);
     if (places) {
       const categories = ["AT4", "CE7", "FD6", "CT1"];
+      const updatedPlaces = {};
 
-      categories.forEach((category) => {
+      for (const category of categories) {
         if (places[category]) {
-          Urls[category] = places[category]
-            .map((place) => place.place_url)
-            .filter(Boolean);
+          updatedPlaces[category] = await Promise.all(
+            places[category].map(async (place) => {
+              const placeId = place.id;
+              const docRef = db.collection(category).doc(placeId);
+              const doc = await docRef.get();
+
+              let rating = "N/A";
+              if (doc.exists) {
+                const data = doc.data();
+                rating = data.rating || "N/A";
+              }
+
+              return {
+                category_name: place.category_name,
+                id: place.id,
+                phone: place.phone,
+                place_name: place.place_name,
+                place_url: place.place_url,
+                road_address_name: place.road_address_name,
+                rating,
+              };
+            })
+          );
+        } else {
+          updatedPlaces[category] = [];
         }
-      });
-      res.json({ date, time, loc, course: places });
+      }
+
+      const leisurePlaces = updatedPlaces["CE7"].filter((place) =>
+        place.category_name.includes("여가시설")
+      );
+
+      updatedPlaces["CT1"] = [...updatedPlaces["CT1"], ...leisurePlaces];
+
+      updatedPlaces["CE7"] = updatedPlaces["CE7"].filter(
+        (place) => !place.category_name.includes("여가시설")
+      );
+      updatedPlaces["CE7"] = updatedPlaces["CE7"].filter((place) =>
+        place.category_name.includes("카페")
+      );
+      res.json({ date, time, loc, course: updatedPlaces });
     } else {
       res.status(500).json({ error: "fail" });
     }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "server" });
+  }
+});
+
+app.post("/api/crawl-now", async (req, res) => {
+  console.log("cn");
+  console.log(Object.entries(Urls));
+  try {
+    for (const [category, urls] of Object.entries(Urls)) {
+      if (urls && urls.length > 0) {
+        console.log(`Category: ${category}, URLs: ${urls.length}`);
+        await crawlAndSave(category, urls);
+      }
+    }
+    res.json({ message: "success" });
+  } catch (err) {
+    res.status(500).json({ error: "fail" });
   }
 });
 
