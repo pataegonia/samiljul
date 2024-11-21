@@ -14,7 +14,10 @@ const getRecommendation = (startTime, endTime) => {
     return "활동적인 야외 데이트를 즐기기 좋은 시간이에요! 🚴‍♀️";
   } else if (startTime >= 18 && endTime <= 22) {
     return "로맨틱한 저녁 식사와 야경을 즐겨보세요. 🌃";
-  } else if ((startTime >= 22 && endTime <= 24) || (startTime >= 0 && endTime <= 6)) {
+  } else if (
+    (startTime >= 22 && endTime <= 24) ||
+    (startTime >= 0 && endTime <= 6)
+  ) {
     return "조용한 카페나 밤 산책을 추천합니다. 🌌";
   } else {
     return "여러분만의 특별한 시간을 만들어보세요! 🌟";
@@ -28,12 +31,12 @@ export default function TimeSelection({ selections, setSelections }) {
 
   const handleNext = () => {
     setSelections({ ...selections, startTime, endTime });
-    navigate("/map");
+    navigate("/samiljul/map");
   };
 
   const handlePrev = () => {
     setSelections({ ...selections, startTime, endTime });
-    navigate("/date");
+    navigate("/samiljul/date");
   };
 
   const handleSliderChange = ([newStart, newEnd]) => {
@@ -67,8 +70,12 @@ export default function TimeSelection({ selections, setSelections }) {
           ]}
         />
         <TimeLabels>
-          <TimeLabel position={(startTime / 24) * 100}>{`${startTime}:00`}</TimeLabel>
-          <TimeLabel position={(endTime / 24) * 100}>{`${endTime}:00`}</TimeLabel>
+          <TimeLabel
+            position={(startTime / 24) * 100}
+          >{`${startTime}:00`}</TimeLabel>
+          <TimeLabel
+            position={(endTime / 24) * 100}
+          >{`${endTime}:00`}</TimeLabel>
         </TimeLabels>
       </SliderWrapper>
 

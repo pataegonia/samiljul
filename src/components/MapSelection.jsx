@@ -80,7 +80,7 @@ const Map = ({ selections, setSelections }) => {
           setSelections({ ...selections, location: selectedDistrict });
         }
 
-        navigate(`/recommand`); // 추천 페이지로 이동
+        navigate(`/samiljul/recommand`); // 추천 페이지로 이동
       },
     });
   };
@@ -95,7 +95,7 @@ const Map = ({ selections, setSelections }) => {
   };
 
   const handlePrev = () => {
-    navigate("/time"); // 이전 페이지로 이동
+    navigate("/samiljul/time"); // 이전 페이지로 이동
   };
 
   return (
@@ -110,21 +110,20 @@ const Map = ({ selections, setSelections }) => {
         position: "relative",
       }}
     >
-        <MapContainer
-          center={[37.5365, 126.978]} // 서울 중심 좌표
-          zoom={11}
-          style={{
-            height: "90%",
-            width: "90%",
-            background: "linear-gradient(135deg, #6a11cb, #2575fc)", // 지도 배경
-          }}
-          zoomControl={false} // 플러스/마이너스 버튼 제거
-          scrollWheelZoom={false} // 스크롤 확대/축소 비활성화
-          dragging={false} // 지도 드래그 비활성화
-          doubleClickZoom={false} // 더블클릭 확대 비활성화
-          keyboard={false} // 키보드 제어 비활성화
-        >
-
+      <MapContainer
+        center={[37.5365, 126.978]} // 서울 중심 좌표
+        zoom={11}
+        style={{
+          height: "90%",
+          width: "90%",
+          background: "linear-gradient(135deg, #6a11cb, #2575fc)", // 지도 배경
+        }}
+        zoomControl={false} // 플러스/마이너스 버튼 제거
+        scrollWheelZoom={false} // 스크롤 확대/축소 비활성화
+        dragging={false} // 지도 드래그 비활성화
+        doubleClickZoom={false} // 더블클릭 확대 비활성화
+        keyboard={false} // 키보드 제어 비활성화
+      >
         {/* 지도 타일 */}
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -158,7 +157,7 @@ const Map = ({ selections, setSelections }) => {
                 );
                 if (selectedDistrict) {
                   setSelections({ ...selections, location: selectedDistrict });
-                  navigate(`/recommand`); // 추천 페이지로 이동
+                  navigate(`/samiljul/recommand`); // 추천 페이지로 이동
                 }
               },
               mouseover: () => {
@@ -172,8 +171,6 @@ const Map = ({ selections, setSelections }) => {
             }}
           />
         ))}
-
-        
       </MapContainer>
 
       {/* 이전 버튼 */}
@@ -203,6 +200,5 @@ const PrevButton = styled.button`
     transform: scale(1.05);
   }
 `;
-
 
 export default Map;

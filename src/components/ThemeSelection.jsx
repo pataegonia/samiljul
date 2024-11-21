@@ -7,10 +7,30 @@ export default function ThemeSelection({ selections, setSelections }) {
   const [selectedThemes, setSelectedThemes] = useState(selections.theme || []);
 
   const themes = [
-    { name: "음식점", description: "다양한 맛집을 탐방하세요.", icon: "🍴", code:"FD6"},
-    { name: "카페", description: "여유로운 카페 탐방을 떠나보세요.", icon: "☕", code:"CE7" },
-    { name: "관광명소", description: "주변의 멋진 관광명소를 발견하세요.", icon: "🗺️", code:"AT4" },
-    { name: "문화시설", description: "박물관, 공연 등을 즐겨보세요.", icon: "🎭", code:"CT1"},
+    {
+      name: "음식점",
+      description: "다양한 맛집을 탐방하세요.",
+      icon: "🍴",
+      code: "FD6",
+    },
+    {
+      name: "카페",
+      description: "여유로운 카페 탐방을 떠나보세요.",
+      icon: "☕",
+      code: "CE7",
+    },
+    {
+      name: "관광명소",
+      description: "주변의 멋진 관광명소를 발견하세요.",
+      icon: "🗺️",
+      code: "AT4",
+    },
+    {
+      name: "문화시설",
+      description: "박물관, 공연 등을 즐겨보세요.",
+      icon: "🎭",
+      code: "CT1",
+    },
   ];
 
   // 테마 선택 처리
@@ -27,7 +47,7 @@ export default function ThemeSelection({ selections, setSelections }) {
   const handleNext = () => {
     if (selectedThemes.length > 0) {
       setSelections({ ...selections, theme: selectedThemes });
-      navigate("/date");
+      navigate("/samiljul/date");
     } else {
       alert("최소 하나 이상의 테마를 선택해주세요!");
     }
@@ -61,22 +81,26 @@ export default function ThemeSelection({ selections, setSelections }) {
       </ButtonGroup>
 
       {selectedThemes.length > 0 && (
-  <SelectedCourses>
-    <h3>선택한 데이트 코스</h3>
-    <CourseFlow>
-      {selectedThemes.map((themeCode, index) => {
-        const theme = themes.find((t) => t.code === themeCode); // 코드로 테마 찾기
-        return (
-          <CourseFlowItem key={index}>
-            <CourseIcon>{theme.icon}</CourseIcon>
-            <CourseName>{theme.name}</CourseName> {/* 이모티콘 + 텍스트 */}
-            {index < selectedThemes.length - 1 && <FlowArrow>➜</FlowArrow>} {/* 화살표 */}
-          </CourseFlowItem>
-        );
-      })}
-    </CourseFlow>
-  </SelectedCourses>
-)}
+        <SelectedCourses>
+          <h3>선택한 데이트 코스</h3>
+          <CourseFlow>
+            {selectedThemes.map((themeCode, index) => {
+              const theme = themes.find((t) => t.code === themeCode); // 코드로 테마 찾기
+              return (
+                <CourseFlowItem key={index}>
+                  <CourseIcon>{theme.icon}</CourseIcon>
+                  <CourseName>{theme.name}</CourseName>{" "}
+                  {/* 이모티콘 + 텍스트 */}
+                  {index < selectedThemes.length - 1 && (
+                    <FlowArrow>➜</FlowArrow>
+                  )}{" "}
+                  {/* 화살표 */}
+                </CourseFlowItem>
+              );
+            })}
+          </CourseFlow>
+        </SelectedCourses>
+      )}
 
       {/* 초기화 및 다음 버튼 */}
       <Footer>
@@ -163,7 +187,7 @@ const CourseIcon = styled.div`
 `;
 
 const CourseName = styled.h3`
-  font-size: 1.0em;
+  font-size: 1em;
   margin-bottom: 5px;
 `;
 
