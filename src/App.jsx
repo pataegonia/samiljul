@@ -66,42 +66,56 @@ function App() {
     location: [],
   });
 
-  const router = createBrowserRouter([
+  const router = createBrowserRouter(
+    [
+      {
+        path: "/",
+        element: <Navigate to="/theme" replace />,
+      },
+      {
+        path: "/theme",
+        element: (
+          <ThemeSelection
+            selections={selections}
+            setSelections={setSelections}
+          />
+        ),
+      },
+      {
+        path: "/date",
+        element: (
+          <DateSelection
+            selections={selections}
+            setSelections={setSelections}
+          />
+        ),
+      },
+      {
+        path: "/time",
+        element: (
+          <TimeSelection
+            selections={selections}
+            setSelections={setSelections}
+          />
+        ),
+      },
+      {
+        path: "/recommand",
+        element: <Recommand selections={selections} />,
+      },
+      {
+        path: "/map",
+        element: <Map selections={selections} setSelections={setSelections} />,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
+    ],
     {
-      path: "/samiljul",
-      element: <Navigate to="/samiljul/theme" replace />,
-    },
-    {
-      path: "/samiljul/theme",
-      element: (
-        <ThemeSelection selections={selections} setSelections={setSelections} />
-      ),
-    },
-    {
-      path: "/samiljul/date",
-      element: (
-        <DateSelection selections={selections} setSelections={setSelections} />
-      ),
-    },
-    {
-      path: "/samiljul/time",
-      element: (
-        <TimeSelection selections={selections} setSelections={setSelections} />
-      ),
-    },
-    {
-      path: "/samiljul/recommand",
-      element: <Recommand selections={selections} />,
-    },
-    {
-      path: "/samiljul/map",
-      element: <Map selections={selections} setSelections={setSelections} />,
-    },
-    {
-      path: "*",
-      element: <NotFound />,
-    },
-  ]);
+      basename: "/samiljul",
+    }
+  );
 
   return (
     <>
