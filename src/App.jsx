@@ -68,33 +68,33 @@ function App() {
 
   const router = createBrowserRouter([
     {
-      path: "/samiljul",
-      element: <Navigate to="/samiljul/theme" replace />,
+      path: "/",
+      element: <Navigate to="/theme" replace />,
     },
     {
-      path: "/samiljul/theme",
+      path: "/theme",
       element: (
         <ThemeSelection selections={selections} setSelections={setSelections} />
       ),
     },
     {
-      path: "/samiljul/date",
+      path: "/date",
       element: (
         <DateSelection selections={selections} setSelections={setSelections} />
       ),
     },
     {
-      path: "/samiljul/time",
+      path: "/time",
       element: (
         <TimeSelection selections={selections} setSelections={setSelections} />
       ),
     },
     {
-      path: "/samiljul/recommand",
+      path: "/recommand",
       element: <Recommand selections={selections} />,
     },
     {
-      path: "/samiljul/map",
+      path: "/map",
       element: <Map selections={selections} setSelections={setSelections} />,
     },
     {
