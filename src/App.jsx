@@ -69,7 +69,7 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/samiljul",
-      element: <Navigate to="/samiljul/theme" replace />,
+      element: <Navigate to="/theme" replace />,
     },
     {
       path: "/samiljul/theme",
