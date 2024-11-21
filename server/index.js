@@ -78,7 +78,7 @@ async function fetchFirestoreData(category, size = 500) {
 }
 
 async function updatePlaceFire(places) {
-  const categories = ["AT4", "CE7", "FD6", "CT1"];
+  const categories = ["AT4", "CE7", "FD6", "CT1"]; // 관광명소, 카페, 음식점, 문화시설
   const updatedPlaces = {};
 
   for (const category of categories) {

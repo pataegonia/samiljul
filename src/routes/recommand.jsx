@@ -38,16 +38,45 @@ export default function Recommand({ selections }) {
   function extractPlaces(course) {
     const filteredPlace = {};
 
-    Object.entries(course).forEach(([key, cateogy]) => {
-      if (Array.isArray(cateogy)) {
-        filteredPlace[key] = cateogy.filter(
-          (item) =>
-            item.road_address_name &&
-            item.road_address_name.includes(location.name)
-        );
+    Object.entries(course).forEach(([key, category]) => {
+      if (Array.isArray(category)) {
+        filteredPlace[key] = category
+          .filter(
+            (item) =>
+              item.road_address_name &&
+              item.road_address_name.includes(location.name)
+          )
+          .map((place) => ({
+            category_name: place.category_name,
+            id: place.id,
+            phone: place.phone,
+            place_name: place.place_name,
+            place_url: place.place_url,
+            rating: place.rating || "N/A",
+            road_address_name: place.road_address_name,
+          }));
+      } else {
+        filteredPlace[key] = [];
       }
     });
     return filteredPlace;
+  }
+
+  function getTopRatedPlaces(filteredPlaces) {
+    const topRatedPlaces = {};
+
+    Object.entries(filteredPlaces).forEach(([category, places]) => {
+      if (Array.isArray(places)) {
+        topRatedPlaces[category] = places
+          .filter((place) => place.rating !== "N/A")
+          .sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating))
+          .slice(0, 10);
+      } else {
+        topRatedPlaces[category] = [];
+      }
+    });
+
+    return topRatedPlaces;
   }
 
   useEffect(() => {
@@ -63,7 +92,8 @@ export default function Recommand({ selections }) {
           location,
         });
         const places = extractPlaces(res.data.course);
-        setRecommandations(places);
+        const topRatedPlaces = getTopRatedPlaces(places);
+        setRecommandations(topRatedPlaces);
       } catch (error) {
         setErr("fail to load");
       } finally {
