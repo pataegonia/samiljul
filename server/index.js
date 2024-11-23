@@ -5,14 +5,16 @@ const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
 const schedule = require("node-schedule");
 const { crwaling } = require("./crawler/placeCrawler.js");
+const { fetchPlacesForAllLocations, crawlAndStore } = require("./crawler");
 
 const app = express();
 const port = 5000;
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 const db = admin.firestore();
 
 app.use(cors());
@@ -71,7 +73,7 @@ async function fetchFirestoreData(category, size = 500) {
     });
 
     if (snapshot.size < size) break;
-    lastDoc = snapshot.docs[snapshot.doc.length - 1];
+    lastDoc = snapshot.docs[snapshot.docs.length - 1];
   }
 
   return results;
@@ -140,6 +142,17 @@ app.post("/api/crawl-now", async (req, res) => {
     res.json({ message: "success" });
   } catch (err) {
     res.status(500).json({ error: "fail" });
+  }
+});
+
+app.post("/api/start-crawl", async (req, res) => {
+  try {
+    const allPlaces = await fetchPlacesForAllLocations();
+    await crawlAndStore(allPlaces);
+    res.status(200).json({ message: "Crawling completed successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Crawling failed" });
   }
 });
 
