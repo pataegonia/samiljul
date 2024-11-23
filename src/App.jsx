@@ -66,56 +66,42 @@ function App() {
     location: [],
   });
 
-  const router = createBrowserRouter(
-    [
-      {
-        path: "/",
-        element: <Navigate to="/theme" replace />,
-      },
-      {
-        path: "/theme",
-        element: (
-          <ThemeSelection
-            selections={selections}
-            setSelections={setSelections}
-          />
-        ),
-      },
-      {
-        path: "/date",
-        element: (
-          <DateSelection
-            selections={selections}
-            setSelections={setSelections}
-          />
-        ),
-      },
-      {
-        path: "/time",
-        element: (
-          <TimeSelection
-            selections={selections}
-            setSelections={setSelections}
-          />
-        ),
-      },
-      {
-        path: "/recommand",
-        element: <Recommand selections={selections} />,
-      },
-      {
-        path: "/map",
-        element: <Map selections={selections} setSelections={setSelections} />,
-      },
-      {
-        path: "*",
-        element: <NotFound />,
-      },
-    ],
+  const router = createBrowserRouter([
     {
-      basename: "/samiljul",
-    }
-  );
+      path: "/",
+      element: <Navigate to="/theme" replace />,
+    },
+    {
+      path: "/theme",
+      element: (
+        <ThemeSelection selections={selections} setSelections={setSelections} />
+      ),
+    },
+    {
+      path: "/date",
+      element: (
+        <DateSelection selections={selections} setSelections={setSelections} />
+      ),
+    },
+    {
+      path: "/time",
+      element: (
+        <TimeSelection selections={selections} setSelections={setSelections} />
+      ),
+    },
+    {
+      path: "/recommand",
+      element: <Recommand selections={selections} />,
+    },
+    {
+      path: "/map",
+      element: <Map selections={selections} setSelections={setSelections} />,
+    },
+    {
+      path: "*",
+      element: <NotFound />,
+    },
+  ]);
 
   return (
     <>
